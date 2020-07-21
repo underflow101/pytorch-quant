@@ -157,13 +157,9 @@ class ReXNetV1(nn.Module):
     def fuse_model(self):
         for m in self.modules():
             if type(m) == SE:
-                for idx in range(len(m.fc)):
-                    if type(m.fc[idx]) == nn.Conv2d:
-                        torch.quantization.fuse_modules(m.fc, [str(idx)], inplace=True)
+                torch.quantization.fuse_modules(m.fc, ['0', '1', '2'], inplace=True)
             if type(m) == LinearBottleneck:
                 for idx in range(len(m.out)):
                     if type(m.out[idx]) == nn.Conv2d:
                         torch.quantization.fuse_modules(m.out, [str(idx), str(idx + 1)], inplace=True)
-                    if type(m.out[idx]) == nn.BatchNorm2d:
-                        torch.quantization.fuse_modules(m.out, [str(idx, str(idx + 1))], inplace=True)
         
